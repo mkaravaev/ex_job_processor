@@ -4,6 +4,7 @@ defmodule ExJobProcessor.JobTask do
   defstruct [
     name: nil,
     command: nil,
+    requires: nil,
     executed: false
   ]
 
@@ -12,6 +13,5 @@ defmodule ExJobProcessor.JobTask do
     command: String.t,
     executed: boolean
   }
-
 
 end
