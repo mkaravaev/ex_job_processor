@@ -1,52 +1,66 @@
 defmodule ExJobProcessor.JobProcessing do
-  alias ExJobProcessor.JobTask
+  alias ExJobProcessor.{JobTask, ProcessedJobTask}
   alias ExJobProcessor.TaskProcessing
 
   @type task :: JobTask.t
-  @type list_of_tasks :: [task]
+  @type tasks_list :: [task] | [String.t]
 
-  @spec run(list_of_tasks) :: list_of_tasks
-  def run(tasks), do: run(tasks, [])
-  def run([], result_acc) do
-    result_acc
-    |> List.flatten
-    |> Enum.reverse()
+  def run(tasks_list) do
+    dict = tasks_list
+    _run(tasks_list, [], dict)
   end
-  def run([%JobTask{requires: requires} = head | tail] = tasks, acc) do
-    case requires do
-      nil -> process_task(tail, head, acc)
 
-      list when is_list(list) ->
-        result = process_requires(list, tasks)
-        acc = result ++ acc
-        root_task = process(head)
-        run(tail, [root_task | acc])
+  defp _run([], acc, _dict), do: acc |> Enum.reverse()
+
+  defp _run([head|tail], acc, dict) do
+    if has_requires?(head) do
+      acc = process_requires(head.requires, acc, dict)
+      acc = 
+        if already_processed?(head, acc) do
+          acc
+        else
+          [process(head) | acc]
+        end
+      _run(tail, acc, dict)
+    else
+      process_job(head, tail, acc, dict)
     end
   end
 
-  defp process_task(left_tasks, task, []) do
-    run(left_tasks, [process(task)])
-  end
-  defp process_task(left_tasks, task, acc) do
-    get_task(task.name, acc)
-    |> case do
-         nil -> run(left_tasks, [process(task) | acc])
-         %JobTask{} -> run(left_tasks, acc)
-       end
+  defp process_job(head, tail, acc, dict) do
+    if already_processed?(head, acc) do
+      _run(tail, acc, dict)
+    else
+      _run(tail, [process(head) | acc], dict)
+    end
   end
 
-  defp process_requires(task_names, tasks) do
-    tasks = get_tasks(task_names, tasks)
-    run(tasks)
-  end
-
-  defp get_tasks(task_names, tasks) do
-    for name <- task_names do
-      get_task(name, tasks)
+  defp process_requires([], acc, _dict), do: acc
+  defp process_requires([head | tail], acc, dict) do
+    case already_processed?(head, acc) do
+      true -> acc
+      false ->
+        processed_task =
+          get_task(head, dict)
+          |> process()
+        process_requires(tail, [processed_task | acc], dict)
     end
   end
 
   defp process(task), do: TaskProcessing.run(task)
+
+  def already_processed?(%JobTask{name: name}, acc), do: _already_processed?(name, acc)
+  def already_processed?(name, acc), do: _already_processed?(name, acc)
+  def _already_processed?(name, acc) do
+    get_task(name, acc)
+    |> case do
+         nil -> false
+         %ProcessedJobTask{} -> true
+       end
+  end
+
+  def has_requires?(%{requires: nil}), do: false
+  def has_requires?(%{requires: requires}) when is_list(requires), do: true
 
   defp get_task(name, tasks) do
     Enum.find(tasks, &(&1.name == name))
