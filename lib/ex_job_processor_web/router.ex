@@ -5,7 +5,9 @@ defmodule ExJobProcessorWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", ExJobProcessorWeb do
+  scope "/", ExJobProcessorWeb do
     pipe_through :api
+    post "/", JobsController, :process
+    post "/to_bash", JobsController, :to_bash
   end
 end

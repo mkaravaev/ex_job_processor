@@ -19,7 +19,7 @@ defmodule ExJobProcessorWeb.ConnCase do
     quote do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
-      alias ExJobProcessorWeb.Router.Helpers, as: Routes
+      import ExJobProcessorWeb.Router.Helpers
 
       # The default endpoint for testing
       @endpoint ExJobProcessorWeb.Endpoint

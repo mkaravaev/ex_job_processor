@@ -1,9 +1,13 @@
 defmodule ExJobProcessor do
-  @moduledoc """
-  ExJobProcessor keeps the contexts that define your domain
-  and business logic.
+  alias ExJobProcessor.{JobProcessing, Tasks}
+  # TODO add types
+  # @type params
+  # @type executed_task
+  # @type err_msg
 
-  Contexts are also responsible for managing your data, regardless
-  if it comes from the database, an external API or others.
-  """
+  # @spec process_task(params) :: {:ok, [executed_task]} | {:error, err_msg}
+  def process_tasks(params) do
+    Tasks.wrap(params)
+    |> JobProcessing.run()
+  end
 end
