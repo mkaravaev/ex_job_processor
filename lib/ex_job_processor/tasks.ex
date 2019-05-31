@@ -12,6 +12,9 @@ defmodule ExJobProcessor.Tasks do
     struct(ProcessedJobTask, task_map)
   end
 
+  def has_requires?(%JobTask{requires: nil}), do: false
+  def has_requires?(%JobTask{requires: requires}) when is_list(requires), do: true
+
   defp _wrap(task) do
     %JobTask{
       name: task["name"] || task.name,
