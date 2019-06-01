@@ -1,18 +1,11 @@
 # ExJobProcessor
 
-To start your Phoenix server:
+## Build docker image
+> docker build -t ex_job_processor .
 
-  * Install dependencies with `mix deps.get`
-  * Start Phoenix endpoint with `mix phx.server`
+## Run test (better run in container for not executing command localy)
+> docker run -it --rm ex_job_processor mix test
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+## Start API
+> docker run --rm -it -p 127.0.0.1:4000:4000 ex_job_processor mix phx.server
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
-
-## Learn more
-
-  * Official website: http://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Mailing list: http://groups.google.com/group/phoenix-talk
-  * Source: https://github.com/phoenixframework/phoenix
