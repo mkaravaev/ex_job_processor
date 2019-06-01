@@ -17,7 +17,7 @@ defmodule ExJobProcessor.TaskProcessingTest do
     end
 
     test "should execute command", context do
-      assert cat_file_cmd(@file_name) == @no_file_error
+      refute ls_folder_cmd() |> to_string =~ @file_name
       TaskProcessing.run(context.task)
       assert ls_folder_cmd() |> to_string =~ @file_name
     end
