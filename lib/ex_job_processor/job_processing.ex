@@ -28,7 +28,7 @@ defmodule ExJobProcessor.JobProcessing do
     _run(tail, acc, dict)
   end
 
-  def process_without_requires([head | tail], acc, dict) do
+  defp process_without_requires([head | tail], acc, dict) do
     if already_processed?(head, acc) do
       _run(tail, acc, dict)
     else

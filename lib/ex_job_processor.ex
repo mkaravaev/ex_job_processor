@@ -1,11 +1,10 @@
 defmodule ExJobProcessor do
-  alias ExJobProcessor.{JobProcessing, Tasks}
-  # TODO add types
-  # @type params
-  # @type executed_task
-  # @type err_msg
+  alias ExJobProcessor.{JobProcessing, Tasks, ProcessedJobTask}
 
-  # @spec process_task(params) :: {:ok, [executed_task]} | {:error, err_msg}
+  @type params :: map()
+  @type executed_tasks :: [ProcessedJobTask.t]
+
+  @spec process_tasks(params) :: [executed_tasks]
   def process_tasks(params) do
     Tasks.wrap(params)
     |> JobProcessing.run()
