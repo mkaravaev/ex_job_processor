@@ -1,6 +1,7 @@
 FROM elixir:1.8-alpine
 
 ENV TERM=xterm
+ENV MIX_ENV=test
 
 RUN addgroup docker -g 1000 && \
     adduser docker -u 1000 -s /bin/ash -SDG docker && \
@@ -22,9 +23,13 @@ WORKDIR $HOME/$APP
 RUN mix local.hex --force && \
     mix local.rebar --force
 
-COPY . ./
+COPY lib ./lib
+COPY test ./test
+COPY mix.exs ./mix.exs
+COPY mix.lock ./mix.lock
+COPY config/ ./config
 
-RUN mix do deps.get
+RUN mix do deps.get, deps.compile
 
 ENV SHELL=/bin/sh
 

@@ -22,7 +22,6 @@ defmodule ExJobProcessorWeb do
       use Phoenix.Controller, namespace: ExJobProcessorWeb
 
       import Plug.Conn
-      import ExJobProcessorWeb.Gettext
       alias ExJobProcessorWeb.Router.Helpers, as: Routes
     end
   end
@@ -37,7 +36,6 @@ defmodule ExJobProcessorWeb do
       import Phoenix.Controller, only: [get_flash: 1, get_flash: 2, view_module: 1]
 
       import ExJobProcessorWeb.ErrorHelpers
-      import ExJobProcessorWeb.Gettext
       alias ExJobProcessorWeb.Router.Helpers, as: Routes
     end
   end
@@ -53,7 +51,6 @@ defmodule ExJobProcessorWeb do
   def channel do
     quote do
       use Phoenix.Channel
-      import ExJobProcessorWeb.Gettext
     end
   end
 

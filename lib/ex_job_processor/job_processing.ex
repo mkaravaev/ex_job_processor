@@ -2,9 +2,10 @@ defmodule ExJobProcessor.JobProcessing do
   alias ExJobProcessor.{Tasks, JobTask, ProcessedJobTask}
   alias ExJobProcessor.TaskProcessing
 
-  @type task :: JobTask.t
-  @type tasks_list :: [task] | [String.t]
+  @type tasks_list :: [JobTask.t] | [String.t]
+  @type executed_tasks :: [ProcessedJobTask.t]
 
+  @spec run(tasks_list) :: [executed_tasks]
   def run(tasks_list) do
     tasks_dictionary = tasks_list
     _run(tasks_list, [], tasks_dictionary)
