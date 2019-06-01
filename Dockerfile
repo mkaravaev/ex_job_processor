@@ -1,35 +1,25 @@
 FROM elixir:1.8-alpine
 
 ENV TERM=xterm
-ENV MIX_ENV=test
-
-RUN addgroup docker -g 1000 && \
-    adduser docker -u 1000 -s /bin/ash -SDG docker && \
-    apk add --update sudo && \
-    echo "docker ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 RUN \
     apk --update upgrade musl && \
     apk --no-cache add git make g++ &&\
     rm -rf /var/cache/apk/*
 
-ENV USER docker
-ENV APP ex_job_processing/
+
+ENV USER=docker
+ENV APP=ex_job_processing/
 ENV HOME=/home/$USER
 
-USER $USER
-WORKDIR $HOME/$APP
+RUN mkdir /app
+COPY . ./app
+WORKDIR /app
 
 RUN mix local.hex --force && \
-    mix local.rebar --force
+  mix local.rebar --force
 
-COPY lib ./lib
-COPY test ./test
-COPY mix.exs ./mix.exs
-COPY mix.lock ./mix.lock
-COPY config/ ./config
-
-RUN mix do deps.get, deps.compile
+RUN mix do deps.compile
 
 ENV SHELL=/bin/sh
 
