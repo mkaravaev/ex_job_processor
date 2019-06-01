@@ -14,6 +14,7 @@ defmodule ExJobProcessorWeb.JobsView do
   def render("to_bash.txt", %{tasks: tasks}) do
     ~s"""
     #!/usr/bin/env bash
+
     #{render_many(tasks, __MODULE__, "executed_bash.txt", as: :task)}
     """
   end
