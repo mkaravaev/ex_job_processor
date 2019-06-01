@@ -34,6 +34,7 @@ defmodule ExJobProcessor.MixProject do
     [
       {:phoenix, "~> 1.4.0"},
       {:jason, "~> 1.0"},
+      {:distillery, "~> 2.0"},
       {:plug_cowboy, "~> 2.0"}
     ]
   end

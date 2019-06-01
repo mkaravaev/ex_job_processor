@@ -19,7 +19,7 @@ WORKDIR /app
 RUN mix local.hex --force && \
   mix local.rebar --force
 
-RUN mix do deps.compile
+RUN mix do deps.get, deps.compile
 
 ENV SHELL=/bin/sh
 
