@@ -4,40 +4,40 @@ defmodule ExJobProcessor.JobProcessing do
 
   @type tasks_list :: [JobTask.t] | [String.t]
   @type executed_tasks :: [ProcessedJobTask.t]
-  @type opts :: [no_execution: true] | [] | nil
+  @type opts :: keyword()
 
   @spec run(tasks_list, opts) :: [executed_tasks]
   def run(tasks_list, opts\\[]) do
-    tasks_dictionary = tasks_list
-    _run(tasks_list, [], tasks_dictionary, opts)
+    opts = Keyword.merge(opts, [dict: tasks_list])
+    run(tasks_list, [], opts)
   end
 
-  defp _run([], acc, _dict, _opts), do: Enum.reverse(acc)
-  defp _run([head|_] = tasks, acc, dict, opts) do
+  defp run([], acc, _opts), do: Enum.reverse(acc)
+  defp run([head|_] = tasks, acc, opts) do
     if Tasks.has_requires?(head) do
-      process_with_requires(tasks, acc, dict, opts)
+      process_with_requires(tasks, acc, opts)
     else
-      process_without_requires(tasks, acc, dict, opts)
+      process_without_requires(tasks, acc, opts)
     end
   end
 
-  defp process_with_requires([head | tail], acc, dict, opts) do
+  defp process_with_requires([head | tail], acc, opts) do
     acc =
-      process_requires(head.requires, acc, dict, opts)
-      |> process_job(head, opts)
+      process_requires(head.requires, acc, opts)
+      |> process_parent_task(head, opts)
 
-    _run(tail, acc, dict, opts)
+    run(tail, acc, opts)
   end
 
-  defp process_without_requires([head | tail], acc, dict, opts) do
+  defp process_without_requires([head | tail], acc, opts) do
     if already_processed?(head, acc) do
-      _run(tail, acc, dict, opts)
+      run(tail, acc, opts)
     else
-      _run(tail, [process(head, opts) | acc], dict, opts)
+      run(tail, [process(head, opts) | acc], opts)
     end
   end
 
-  defp process_job(acc, head, opts) do
+  defp process_parent_task(acc, head, opts) do
     if already_processed?(head, acc) do
       acc
     else
@@ -45,15 +45,16 @@ defmodule ExJobProcessor.JobProcessing do
     end
   end
 
-  defp process_requires([], acc, _dict, _opts), do: acc
-  defp process_requires([head | tail], acc, dict, opts) do
+  defp process_requires([], acc, _opts), do: acc
+  defp process_requires([head | tail], acc, opts) do
     if already_processed?(head, acc) do
       acc
     else
       processed_task =
-        get_task(head, dict)
+        get_task(head, opts[:dict])
         |> process(opts)
-      process_requires(tail, [processed_task | acc], dict, opts)
+
+      process_requires(tail, [processed_task | acc], opts)
     end
   end
 
