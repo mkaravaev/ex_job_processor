@@ -9,4 +9,10 @@ defmodule ExJobProcessor do
     Tasks.wrap(params)
     |> JobProcessing.run()
   end
+
+  def process_tasks(params, opts) do
+    Tasks.wrap(params)
+    |> JobProcessing.run(opts)
+  end
+
 end

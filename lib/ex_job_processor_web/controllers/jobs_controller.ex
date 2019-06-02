@@ -7,7 +7,7 @@ defmodule ExJobProcessorWeb.JobsController do
   end
 
   def to_bash(conn, %{"tasks" => tasks}) do
-    with executed_tasks <- ExJobProcessor.process_tasks(tasks),
+    with executed_tasks <- ExJobProcessor.process_tasks(tasks, no_execution: true),
       do: render(conn, "to_bash.txt", tasks: executed_tasks)
   end
 
