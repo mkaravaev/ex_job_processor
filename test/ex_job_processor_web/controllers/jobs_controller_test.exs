@@ -6,7 +6,7 @@ defmodule ExJobProcessorWeb.JobsControllerTest do
   describe "/" do
     test "should process job", %{conn: conn, tasks: tasks} do
       conn = post(conn, jobs_path(conn, :process), tasks: tasks)
-      assert json_response(conn, 200) == [%{"command" => "touch hello3.txt", "name" => "task_3"}, %{"command" => "touch hello1.txt", "name" => "task_1"}, %{"command" => "touch hello2.txt", "name" => "task_2"}]
+      assert json_response(conn, 200) == expected_result()
     end
   end
 
@@ -27,6 +27,14 @@ defmodule ExJobProcessorWeb.JobsControllerTest do
       ]
 
     [tasks: tasks]
+  end
+
+  defp expected_result do
+    [
+      %{"command" => "touch hello3.txt", "name" => "task_3"}, 
+      %{"command" => "touch hello1.txt", "name" => "task_1"}, 
+      %{"command" => "touch hello2.txt", "name" => "task_2"}
+    ]
   end
 
   
