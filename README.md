@@ -16,11 +16,12 @@ headers: application/json
 > POST http://localhost:4000/to_bash
 
 ## Deployment
-> Let's discuss deployment strategies on interwiev call
+> Let's discuss deployment strategies on interview call
 > I can make it throught k8s or direct to node with edeliver.
 > It doesn't make sense to implement without actual cluster or remote server :)
 
-> build release with `mix release --env=prod --verbose`.
+## Build release
+> mix release --env=prod --verbose
 
 
 
